@@ -12,7 +12,10 @@
 // p5: https://editor.p5js.org/codingtrain/sketches/r8l8XXD2A
 
 // _todo = [
-  // 'add ability to have an animated line for which each of its endpoints bounces of the corners of the window (b key)'
+  // 'add ability to have an animated line for which each of its endpoints bounces of the corners of the window (b key)',
+  // 'add ability to change line thickness',
+  // 'add more 3/4D shapes, such as a tesseract and the minecraft end crystal',
+  // 'add the ability to change the color (j and k keys)'
 // ];
 
 // _features = [
@@ -174,7 +177,7 @@ function drawCube() {
     let projected2d = matmul(projection, rotated);
 
     // zoom the cube to fit the window size
-    projected2d.mult(windowHeight / 10 + 40);
+    projected2d.mult(windowWidth / 10);
     projected[i] = projected2d
     
     // move the cube the middle of the screen
