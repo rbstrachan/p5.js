@@ -177,7 +177,7 @@ function drawCube() {
     let projected2d = matmul(projection, rotated);
 
     // zoom the cube to fit the window size
-    projected2d.mult(windowWidth / 10);
+    projected2d.mult(min(windowHeight, windowWidth) * 0.125 + 25);
     projected[i] = projected2d
     
     // move the cube the middle of the screen
