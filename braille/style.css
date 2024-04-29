@@ -1,0 +1,13 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+canvas {
+  display: block;
+}
+input {
+  font-size: 30px;
+  background-color: black;
+  color: white;
+  border-radius: 6px;
+}
