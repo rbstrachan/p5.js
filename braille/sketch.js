@@ -1,10 +1,9 @@
 // add ability to choose between braille grades
 // add capital letter mark, then remove .toLowerCase() so that capital letters can be tested
 // make sure all numbers are preceeded by a number mark
-// have a green check appear if guess is correct, red cross if not. do not change bg color.
+// have a green check appear if guess is correct, red cross if not
 // add correct guesses counter
 // add way to track which sentences have been given and do not repeat them until exhaustion
-// add also short and long sentences and increase the length of the sentence as the session continues
 
 let easy = [
   "I see a cat.",
@@ -96,11 +95,27 @@ let hard = [
   "Ugh, I think I'm coming down with a cold. Just what I need.",
   "Can you make sure the kids brush their teeth before bed?",
 ];
+let long = [
+  "The crooked, cobblestone street wound its way through the heart of the old town, its uneven surface a testament to centuries of footsteps. Worn shop signs creaked in the salty breeze, their faded paint hinting at the vibrant past of the once-thriving port.",
+  "Laughter spilled out from a brightly lit tavern door, momentarily breaking the peaceful rhythm of the lapping waves against the weathered docks. As dusk settled, casting long shadows across the square, a lone figure emerged from the labyrinth of alleys, their face obscured by the deepening twilight.",
+  "Despite the scorching desert sun beating down mercilessly, the determined archaeologist pressed on, her boots crunching on the ancient sand. Each step felt heavy with the weight of history, the vast expanse of dunes whispering secrets of forgotten civilizations.",
+  "In the distance, a jagged line of eroded cliffs shimmered in the heat haze, promising a potential resting place and perhaps, a hidden doorway to a long-lost tomb. A sudden gust of wind whipped sand into her face, momentarily blurring her vision, but she refused to falter, driven by an insatiable curiosity and the thrill of discovery.",
+  "Nestled amongst the towering redwoods, a sense of serenity permeated the air, broken only by the gentle chirping of unseen birds. Sunlight filtered through the dense canopy, casting dappled patterns on the mossy forest floor.",
+  "A winding path, carpeted with fallen leaves, beckoned exploration, promising hidden waterfalls and ancient, gnarled trees that seemed to stand guard over the timeless beauty of the wilderness. With each inhaled breath, the fresh, pine-scented air invigorated the soul, offering a welcome escape from the hustle and bustle of everyday life.",
+  "The aroma of freshly baked bread hung heavy in the air, wafting from the bustling bakery across the street. Tourists marveled at the intricate architecture of the medieval cathedral, its weathered gargoyles casting watchful gazes upon the cobblestone square below.",
+  "A group of artists set up their easels, capturing the vibrant energy of the scene in quick brushstrokes. As the clock tower chimed midday, a flock of pigeons fluttered overhead, their cooing adding to the symphony of everyday sounds in the heart of the ancient city.",
+  "Beneath the shimmering surface of the lake, a world of breathtaking beauty unfolded. Sunlight streamed through crystal-clear water, illuminating vibrant coral reefs teeming with colorful fish.",
+  "Schools of silver minnows darted between swaying aquatic plants, while a lone, graceful seahorse clung to a rocky outcrop. In the distance, a shadowy shape emerged from the depths, its sleek form gliding effortlessly through the water. It was a moment frozen in time, a glimpse into the vibrant ecosystem hidden beneath the placid surface.",
+  "The weight of countless stories seemed to press down from the dusty shelves of the antique bookstore. Worn leather spines whispered tales of adventure and romance, while weathered maps hinted at journeys to faraway lands. A faint scent of old paper mingled with the musty aroma of time, creating an atmosphere of forgotten memories and whispered secrets.",
+  "As a lone customer wandered the labyrinthine aisles, their fingertips tracing the embossed lettering of a first edition, one couldn't help but feel transported to another era, a time when the written word held a power beyond measure."
+];
 let message;
-let userInput;
+let correct;
 let inputBox;
 let brailleNormal;
 let indicator;
+let difficultySlider;
+let setButton;
 
 function preload() {
   brailleNormal = loadFont("fonts/braille.ttf");
@@ -108,31 +123,34 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  background(0);
-  textAlign(CENTER, CENTER);
-  textWrap(WORD);
-  textSize(96);
-  textFont(brailleNormal);
-  message = random(hard);
-  fill(255);
-  text(message, width / 6, 0, (width * 2) / 3, height - 128);
+  
+  difficultySlider = createSlider(1, 3, 2);
+  difficultySlider.position(20, 10);
+  difficultySlider.size(150);
+  difficultySlider.input(showSentence)
+  
   inputBox = createInput();
   inputBox.size((width * 2) / 3);
   inputBox.position((width - inputBox.width) / 2, height - 100);
   inputBox.show();
+  
+  textAlign(CENTER, CENTER);
+  textWrap(WORD);
+  
+  showSentence();
 }
 
-// no need for draw function as all input and reloading is done on keypresses
+// no need for draw function as all input and reloading is done on keypress
 // function draw() {}
 
 function keyPressed() {
-  checkInput(key);
+  checkInput();
 }
 
-function showBadge(state = true) {
+function showBadge(state) {
   background(0);
-  textFont("Arial");
   textSize(32);
+  textFont("Arial");
   fill(state ? "green" : "red");
   indicator = text(
     state ? "correct" : "incorrect, try again",
@@ -141,19 +159,37 @@ function showBadge(state = true) {
   );
 }
 
-function checkInput(k) {
+function checkInput() {
   if (keyCode == ENTER) {
-    userInput = inputBox.value();
-    if (userInput.toLowerCase() === message.toLowerCase()) {
-      showBadge();
-      message = random(hard);
-    } else {
-      showBadge(false);
+    correct = inputBox.value().toLowerCase() === message.toLowerCase();
+    if (correct) {
+      chooseMessage();
+      inputBox.value('');
     }
-    textSize(96);
+    showBadge(correct);
+    textSize(difficultySlider.value() == 3 ? 64 : 96);
     textFont(brailleNormal);
     fill(255);
     text(message, width / 6, 0, (width * 2) / 3, height - 128);
-    inputBox.value("");
   }
+}
+
+function chooseMessage() {
+  let difficulty = difficultySlider.value();
+  if (difficulty === 1) {
+    message = random(easy);
+  } else if (difficulty === 2) {
+    message = random(hard);
+  } else {
+    message = random(long);
+  }
+}
+
+function showSentence() {
+  background(0);
+  textSize(difficultySlider.value() == 3 ? 64 : 96);
+  textFont(brailleNormal);
+  chooseMessage();
+  fill(255);
+  text(message, width / 6, 0, (width * 2) / 3, height - 128);
 }
