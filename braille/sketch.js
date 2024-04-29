@@ -5,7 +5,8 @@
 // add correct guesses counter
 // add way to track which sentences have been given and do not repeat them until exhaustion
 
-let easy = [
+let difficulties = {
+  1: [
   "I see a cat.",
   "The dog is red.",
   "We go to school.",
@@ -72,8 +73,8 @@ let easy = [
   "Please give me the ball.",
   "It's cold outside!",
   "Wow!",
-];
-let hard = [
+  ],
+  2: [
   "Hey! How's your day going?",
   "Wow, your garden looks beautiful! Those roses are blooming nicely.",
   "Excuse me, do you know what time the bus arrives?",
@@ -94,8 +95,8 @@ let hard = [
   "What are your plans for the weekend? Anything exciting?",
   "Ugh, I think I'm coming down with a cold. Just what I need.",
   "Can you make sure the kids brush their teeth before bed?",
-];
-let long = [
+  ],
+  3: [
   "The crooked, cobblestone street wound its way through the heart of the old town, its uneven surface a testament to centuries of footsteps. Worn shop signs creaked in the salty breeze, their faded paint hinting at the vibrant past of the once-thriving port.",
   "Laughter spilled out from a brightly lit tavern door, momentarily breaking the peaceful rhythm of the lapping waves against the weathered docks. As dusk settled, casting long shadows across the square, a lone figure emerged from the labyrinth of alleys, their face obscured by the deepening twilight.",
   "Despite the scorching desert sun beating down mercilessly, the determined archaeologist pressed on, her boots crunching on the ancient sand. Each step felt heavy with the weight of history, the vast expanse of dunes whispering secrets of forgotten civilizations.",
@@ -108,17 +109,16 @@ let long = [
   "Schools of silver minnows darted between swaying aquatic plants, while a lone, graceful seahorse clung to a rocky outcrop. In the distance, a shadowy shape emerged from the depths, its sleek form gliding effortlessly through the water. It was a moment frozen in time, a glimpse into the vibrant ecosystem hidden beneath the placid surface.",
   "The weight of countless stories seemed to press down from the dusty shelves of the antique bookstore. Worn leather spines whispered tales of adventure and romance, while weathered maps hinted at journeys to faraway lands. A faint scent of old paper mingled with the musty aroma of time, creating an atmosphere of forgotten memories and whispered secrets.",
   "As a lone customer wandered the labyrinthine aisles, their fingertips tracing the embossed lettering of a first edition, one couldn't help but feel transported to another era, a time when the written word held a power beyond measure."
-];
+  ]
+}
+
 let message;
-let correct;
 let inputBox;
-let brailleNormal;
-let indicator;
+let brailleFont;
 let difficultySlider;
-let setButton;
 
 function preload() {
-  brailleNormal = loadFont("fonts/braille.ttf");
+  brailleFont = loadFont("fonts/braille.ttf");
 }
 
 function setup() {
@@ -127,24 +127,52 @@ function setup() {
   difficultySlider = createSlider(1, 3, 2);
   difficultySlider.position(20, 10);
   difficultySlider.size(150);
-  difficultySlider.input(showSentence)
+  difficultySlider.input(chooseMessage)
   
   inputBox = createInput();
-  inputBox.size((width * 2) / 3);
+  inputBox.size(width * 2 / 3);
   inputBox.position((width - inputBox.width) / 2, height - 100);
   inputBox.show();
   
   textAlign(CENTER, CENTER);
   textWrap(WORD);
   
-  showSentence();
+  chooseMessage();
+  // updateMessage();
 }
 
 // no need for draw function as all input and reloading is done on keypress
 // function draw() {}
 
+function updateMessage(refresh = true) {
+  if (refresh) background(0);
+  textSize(difficultySlider.value() == 3 ? 64 : 96);
+  textFont(brailleFont);
+  fill(255);
+  text(message, width / 6, 0, (width * 2) / 3, height - 128);
+}
+
+function chooseMessage() {
+  message = random(difficulties[difficultySlider.value()])
+  updateMessage();
+}
+
 function keyPressed() {
-  checkInput();
+  if (keyCode === ENTER) {
+    checkInput();
+  }
+}
+
+function checkInput() {
+  const isCorrect = inputBox.value().toLowerCase() === message.toLowerCase();
+  
+  if (isCorrect) {
+    chooseMessage();
+    inputBox.value('');
+  }
+  
+  showBadge(isCorrect);
+  updateMessage(false);
 }
 
 function showBadge(state) {
@@ -152,44 +180,9 @@ function showBadge(state) {
   textSize(32);
   textFont("Arial");
   fill(state ? "green" : "red");
-  indicator = text(
-    state ? "correct" : "incorrect, try again",
+  text(
+    state ? "Correct!" : "Incorrect, try again.",
     width / 2,
     inputBox.y - textSize()
   );
-}
-
-function checkInput() {
-  if (keyCode == ENTER) {
-    correct = inputBox.value().toLowerCase() === message.toLowerCase();
-    if (correct) {
-      chooseMessage();
-      inputBox.value('');
-    }
-    showBadge(correct);
-    textSize(difficultySlider.value() == 3 ? 64 : 96);
-    textFont(brailleNormal);
-    fill(255);
-    text(message, width / 6, 0, (width * 2) / 3, height - 128);
-  }
-}
-
-function chooseMessage() {
-  let difficulty = difficultySlider.value();
-  if (difficulty === 1) {
-    message = random(easy);
-  } else if (difficulty === 2) {
-    message = random(hard);
-  } else {
-    message = random(long);
-  }
-}
-
-function showSentence() {
-  background(0);
-  textSize(difficultySlider.value() == 3 ? 64 : 96);
-  textFont(brailleNormal);
-  chooseMessage();
-  fill(255);
-  text(message, width / 6, 0, (width * 2) / 3, height - 128);
 }
