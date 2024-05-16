@@ -1,0 +1,18 @@
+html, body {}
+
+canvas {
+  display: block;
+  padding-right: 100px;
+}
+
+.container {
+  display: flex; /* Make the container a flexbox */
+  min-height: 98vh; /* Set container height to viewport height */
+  align-items: center; /* Vertically center elements within container */
+  justify-content: space-around;
+}
+
+.container textarea,
+.container canvas {
+/*   flex: 1; /* Make both elements take up equal space */ */
+}
