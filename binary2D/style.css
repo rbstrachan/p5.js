@@ -14,5 +14,5 @@ canvas {
 
 .container textarea,
 .container canvas {
-/*   flex: 1; /* Make both elements take up equal space */ */
+  /*   flex: 1; /* Make both elements take up equal space */
 }
