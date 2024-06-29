@@ -404,7 +404,6 @@ const aWords = [
   { mot: "créature", genre: "féminin", sig: "creature", regle: "" },
   { mot: "crédit", genre: "masculin", sig: "credit", regle: "" },
   { mot: "crème", genre: "féminin", sig: "cream", regle: "" },
-  { mot: "crétin", genre: "masculin", sig: "moron", regle: "" },
   { mot: "cri", genre: "masculin", sig: "cry; scream; shout; yell", regle: "" },
   { mot: "crime", genre: "masculin", sig: "crime", regle: "" },
   { mot: "crise", genre: "féminin", sig: "crisis; attack (medical)", regle: "" },
