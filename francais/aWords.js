@@ -1,5 +1,4 @@
 const aWords = [
-  { mot: "mot", genre: "genre", sig: "signification", regle: "regle" },
   { mot: "(auto)route", genre: "féminin", sig: "highway; road; route", regle: "" },
   { mot: "abeille", genre: "féminin", sig: "bee", regle: "" },
   { mot: "abri", genre: "masculin", sig: "shelter; shed", regle: "" },

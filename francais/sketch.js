@@ -28,7 +28,7 @@ let score = 0;
 let total = 0;
 
 function setup() {
-  canvas = createCanvas(windowWidth, windowHeight - 540); // create the canvas on which the words will be displayed
+  canvas = createCanvas(windowWidth, 230); // create the canvas on which the words will be displayed
   canvas.parent('canvas-holder'); // force the canvas to be displayed in the correct position on the page
   
   textAlign(CENTER, CENTER);
@@ -51,14 +51,14 @@ function draw() {
   currentWord = random(pickWordBank());
   textSize(64);
   textStyle(NORMAL);
-  text(currentWord.mot, width/2, height / 2 - 75);
+  text(currentWord.mot, width/2, 90);
   textSize(32);
   textStyle(ITALIC);
-  text(currentWord.sig, 3*width/16, height /2 + 50, 5*width/8);
+  text(currentWord.sig, 3*width/16, 155, 5*width/8);
   textSize(16);
-  text(`total: ${total}`, width/3, 30);
-  text(`correct: ${score}`, width/2, 30);
-  text(`accuracy: ${round(score / total * 100) || 0}%`, 2*width/3 , 30);
+  text(`total: ${total}`, width/3, 10);
+  text(`correct: ${score}`, width/2, 10);
+  text(`accuracy: ${round(score / total * 100) || 0}%`, 2*width/3 , 10);
 }
 
 function pickWordBank() {
@@ -70,7 +70,7 @@ function handleResponse(e) {
   const selectedRadio = document.querySelector('input[name="réponses"]:checked');
   
   if (!selectedRadio) { // if no radio button selected, warn and no not continue
-    text(`↓ Uh oh, it looks like you forgot to select a gender! ↓`, width / 2, height - 10);
+    text(`↓ Uh oh, it looks like you forgot to select a gender! ↓`, width / 2, height - 30);
     return
   }
     
