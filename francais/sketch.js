@@ -26,6 +26,11 @@ let idkButton;
 let currentWord;
 let score = 0;
 let total = 0;
+let spectral;
+
+function preload() {
+  spectral = loadFont("fonts/Spectral.ttf");
+}
 
 function setup() {
   canvas = createCanvas(windowWidth, 250); // create the canvas on which the words will be displayed
@@ -33,7 +38,7 @@ function setup() {
   
   textAlign(CENTER, CENTER);
   textWrap(WORD);
-  textFont("Spectral");
+  textFont(spectral);
   fill(255);
   
   submitButton = document.querySelector('.btn-success');
@@ -107,14 +112,13 @@ function handleFail(e) {
 
 // allow user to choose option with keyboard
 function handleKeyPress(e) {
+  e.preventDefault();
   const key = e.key.toLowerCase();
   if (key === 'm' || key === '1' || key === 'f' || key === '2') {
     const radios = document.querySelectorAll('input[name="réponses"]');
     const selectedRadio = key === 'm' || key === '1' ? radios[0] : radios[1]; // Select based on key
     selectedRadio.checked = true;
-  }
-  e.preventDefault();
-  if (key === 'enter') {
+  } else if (key === 'enter') {
     submitButton.click(); // simulate submit button click on Enter
   } else if (key === 'escape') {
     closeInstructionsPopup();  // call function to close popup

@@ -12,6 +12,3 @@ function closeInstructionsPopup() {
 
 // Show the popup on page load
 window.addEventListener('load', showInstructionsPopup);
-
-// const samwButton = document.querySelector(".btn-samw");
-// samwButton.addEventListener('click', () => )
