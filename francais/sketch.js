@@ -28,11 +28,12 @@ let score = 0;
 let total = 0;
 
 function setup() {
-  canvas = createCanvas(windowWidth, 230); // create the canvas on which the words will be displayed
+  canvas = createCanvas(windowWidth, 250); // create the canvas on which the words will be displayed
   canvas.parent('canvas-holder'); // force the canvas to be displayed in the correct position on the page
   
   textAlign(CENTER, CENTER);
   textWrap(WORD);
+  textFont("Spectral");
   fill(255);
   
   submitButton = document.querySelector('.btn-success');
