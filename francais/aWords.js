@@ -478,7 +478,7 @@ const aWords = [
   { mot: "docteur", genre: "masculin", sig: "doctor", regle: "" },
   { mot: "document", genre: "masculin", sig: "document", regle: "" },
   { mot: "doigt", genre: "masculin", sig: "finger", regle: "" },
-  { mot: "dollar", genre: "masculin", sig: "buck", regle: "" },
+  { mot: "dollar", genre: "masculin", sig: "dollar (unit of currency)", regle: "" },
   { mot: "dommage", genre: "masculin", sig: "damage", regle: "" },
   { mot: "données", genre: "féminin", sig: "data", regle: "" },
   { mot: "dossier", genre: "masculin", sig: "file", regle: "" },

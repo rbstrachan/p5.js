@@ -5,7 +5,6 @@
 //   "add black square over warning text when radio button is selected",
 //   "allow words to be chosen by CEFR level (A, B, C)",
 //   "add limited pratice run (10, 20, 30 questions, etc)",
-//   "change fonts",
 //   "add countdown of words remaining in set. progress bar?"
 // ];
 
@@ -26,10 +25,12 @@ let idkButton;
 let currentWord;
 let score = 0;
 let total = 0;
-let spectral;
+let spectral, spectralItalic, spectralBoldItalic; // spectralBold
 
 function preload() {
   spectral = loadFont("fonts/Spectral.ttf");
+  spectralItalic = loadFont("fonts/Spectral-Italic.ttf");
+  spectralBoldItalic = loadFont("fonts/Spectral-BoldItalic.ttf");
 }
 
 function setup() {
@@ -38,8 +39,9 @@ function setup() {
   
   textAlign(CENTER, CENTER);
   textWrap(WORD);
-  textFont(spectral);
   fill(255);
+  
+  drawText();
   
   submitButton = document.querySelector('.btn-success');
   submitButton.addEventListener('click', handleResponse);
@@ -49,34 +51,42 @@ function setup() {
   
   document.addEventListener('keydown', handleKeyPress);
   
+  // frameRate(1);
   noLoop(); // prevent the code from running every frame
 }
 
-function draw() {
+function drawText() {
   background('#17181c');
   currentWord = random(pickWordBank());
-  textSize(64);
-  textStyle(NORMAL);
-  text(currentWord.mot, width/2, 90);
-  textSize(32);
-  textStyle(ITALIC);
-  text(currentWord.sig, 3*width/16, 155, 5*width/8);
-  textSize(16);
-  text(`total: ${total}`, width/3, 10);
-  text(`correct: ${score}`, width/2, 10);
-  text(`accuracy: ${round(score / total * 100) || 0}%`, 2*width/3 , 10);
+  
+  textFont(spectral, 64);
+  text(currentWord.mot, width/2, 85);
+
+  textFont(spectralItalic, 32);
+  text(currentWord.sig, 3*width/16, 150, 5*width/8);
+
+  textFont(spectralBoldItalic, 16);
+  text("total", width/3, 5);
+  text("correct", width/2, 5);
+  text("accuracy", 2*width/3 , 5);
+  
+  textFont(spectral);
+  text(total, width/3, 25);
+  text(score, width/2, 25);
+  text(`${round(score / total * 100) || 0}%`, 2*width/3, 25);
 }
 
 function pickWordBank() {
   return aWords
 }
 
+// if an answer is chosen
 function handleResponse(e) {
   e.preventDefault();
   const selectedRadio = document.querySelector('input[name="réponses"]:checked');
   
-  if (!selectedRadio) { // if no radio button selected, warn and no not continue
-    text(`↓ Uh oh, it looks like you forgot to select a gender! ↓`, width / 2, height - 30);
+  if (!selectedRadio) { // if no radio button selected, warn and do not continue
+    text(`↓ Uh oh, it looks like you forgot to select a gender! ↓`, width / 2, height - 35);
     return
   }
     
@@ -88,10 +98,10 @@ function handleResponse(e) {
   if (userSelection[0] == previousGenre[0]) { score++; }
   total++;
     
-  draw(); // display a new word
+  drawText(); //currentWord = pickWord(); // display a new word
   
   if (userSelection[0] !== previousGenre[0]) {
-    text(`Oups, that's not quite right. The gender of « ${previousMot} » is ${previousGenre}.`, width / 2, height - 10);
+    text(`Oups, that's not quite right. The gender of « ${previousMot} » is ${previousGenre}.`, width / 2, height - 15);
     return
   }
 }
@@ -103,11 +113,10 @@ function handleFail(e) {
   
   let previousMot = currentWord.mot;
   let previousGenre = currentWord.genre;
-
   
-  draw();
+  drawText(); //currentWord = pickWord();
   
-  text(`No worries, let's skip this quesion. For future reference, the gender of « ${previousMot} » is ${previousGenre}.`, width / 2, height - 10);
+  text(`No worries, let's skip this quesion. For future reference, the gender of « ${previousMot} » is ${previousGenre}.`, width / 2, height - 15);
 }
 
 // allow user to choose option with keyboard
