@@ -786,7 +786,6 @@ const aWords = [
   { mot: "justice", genre: "féminin", sig: "justice", regle: "" },
   { mot: "kit", genre: "masculin", sig: "kit", regle: "" },
   { mot: "laboratoire", genre: "masculin", sig: "lab", regle: "" },
-  { mot: "lâche", genre: "masculin", sig: "coward", regle: "" },
   { mot: "lait", genre: "masculin", sig: "milk", regle: "" },
   { mot: "lame", genre: "féminin", sig: "blade", regle: "" },
   { mot: "lampe", genre: "féminin", sig: "lamp", regle: "" },
