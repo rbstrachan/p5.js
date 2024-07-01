@@ -4,7 +4,7 @@
 //   "prevent words from being reselected if correct answer given",
 //   "add black square over warning text when radio button is selected",
 //   "allow words to be chosen by CEFR level (A, B, C)",
-//   "add limited pratice run (10, 20, 30 questions, etc)",
+//   "add limited pratice runs (10, 20, 30 questions, etc)",
 //   "add countdown of words remaining in set. progress bar?"
 // ];
 
@@ -18,8 +18,6 @@
 //   "choose your answer with the keyboard and the enter key"
 // ];
 
-const bWords = [{}];
-const cWords = [{}];
 let submitButton;
 let idkButton;
 let currentWord;
@@ -51,7 +49,6 @@ function setup() {
   
   document.addEventListener('keydown', handleKeyPress);
   
-  // frameRate(1);
   noLoop(); // prevent the code from running every frame
 }
 
@@ -59,12 +56,15 @@ function drawText() {
   background('#17181c');
   currentWord = random(pickWordBank());
   
+  // word
   textFont(spectral, 64);
   text(currentWord.mot, width/2, 85);
 
+  // meaning
   textFont(spectralItalic, 32);
-  text(currentWord.sig, 3*width/16, 150, 5*width/8);
-
+  text(currentWord.sig, 0, 150, width);
+    
+  // scores
   textFont(spectralBoldItalic, 16);
   text("total", width/3, 5);
   text("correct", width/2, 5);
