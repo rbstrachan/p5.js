@@ -41,6 +41,9 @@ function setup() {
   
   drawText();
   
+  esdButton = document.querySelector('.esd');
+  esdButton.addEventListener('click', enSavoirDavantage);
+  
   submitButton = document.querySelector('.btn-success');
   submitButton.addEventListener('click', handleResponse);
   
@@ -117,6 +120,13 @@ function handleFail(e) {
   drawText(); //currentWord = pickWord();
   
   text(`No worries, let's skip this quesion. For future reference, the gender of « ${previousMot} » is ${previousGenre}.`, width / 2, height - 15);
+}
+    
+// redirect user to dictionary
+function enSavoirDavantage(e) {
+  e.preventDefault();
+  // window.open("https://www.larousse.fr/dictionnaires/francais/" + currentWord.mot, '_blank').focus();
+  window.open("https://www.wordreference.com/fren/" + currentWord.mot, '_blank').focus();
 }
 
 // allow user to choose option with keyboard
