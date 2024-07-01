@@ -1074,7 +1074,6 @@ const aWords = [
   { mot: "phase", genre: "féminin", sig: "phase", regle: "" },
   { mot: "philosophie", genre: "féminin", sig: "philosophy", regle: "" },
   { mot: "photo", genre: "féminin", sig: "photo", regle: "" },
-  { mot: "photographe", genre: "masculin", sig: "photographer", regle: "" },
   { mot: "phrase", genre: "féminin", sig: "sentence", regle: "" },
   { mot: "physique", genre: "féminin", sig: "physics", regle: "" },
   { mot: "piano", genre: "masculin", sig: "piano", regle: "" },
