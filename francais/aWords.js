@@ -307,7 +307,7 @@ const aWords = [
   { mot: "cigarette", genre: "féminin", sig: "cigarette", regle: "" },
   { mot: "cimetière", genre: "masculin", sig: "cemetery", regle: "" },
   { mot: "cinéma", genre: "masculin", sig: "cinema", regle: "" },
-  { mot: "cintre", genre: "msculin", sig: "(coat)hanger", regle: "" },
+  { mot: "cintre", genre: "masculin", sig: "(coat)hanger", regle: "" },
   { mot: "circonstance", genre: "féminin", sig: "circumstance", regle: "" },
   { mot: "circulation", genre: "féminin", sig: "traffic", regle: "" },
   { mot: "cirque", genre: "masculin", sig: "circus", regle: "" },
