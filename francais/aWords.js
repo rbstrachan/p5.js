@@ -68,7 +68,7 @@ const aWords = [
   { mot: "applaudissements", genre: "masculin", sig: "applause" },
   { mot: "approche", genre: "féminin", sig: "approach" },
   { mot: "approvisionnement", genre: "masculin", sig: "supply" },
-  { mot: "après-midi", genre: "féminin", sig: "afternoon" },
+  { mot: "après-midi", genre: "masculin", sig: "afternoon" },
   { mot: "araignée", genre: "féminin", sig: "spider" },
   { mot: "arbre", genre: "masculin", sig: "tree" },
   { mot: "arc", genre: "masculin", sig: "bow" },
