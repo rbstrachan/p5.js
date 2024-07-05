@@ -1,11 +1,10 @@
 // todo = [
-//   "add positive feedback indicators (visual, audible)",
 //   "add an instant mode, where the answer is accepted as soon as a choice is made"
-//   "prevent words from being reselected if correct answer given",
 //   "add black square over warning text when radio button is selected",
 //   "allow words to be chosen by CEFR level (A, B, C)",
 //   "add limited pratice runs (10, 20, 30 questions, etc)",
-//   "add countdown of words remaining in set. progress bar?"
+//   "add countdown of words remaining in set. progress bar?",
+//   "privde a list of missed words for future practice (as an Anki deck?)"
 // ];
 
 // features = [
@@ -15,7 +14,8 @@
 //   "practice an infinite number of times for as long as you want",
 //   "keep score of your efforts",
 //   "anticheat -- words and their definitions are displayed as images to prevent copy-pasting"
-//   "choose your answer with the keyboard and the enter key"
+//   "choose your answer with the keyboard and the enter key",
+//   "words no longer repeat once they are chosen correctly"
 // ];
 
 let submitButton;
@@ -24,6 +24,7 @@ let currentWord;
 let score = 0;
 let total = 0;
 let spectral, spectralItalic, spectralBoldItalic; // spectralBold
+let usedWords = [];
 
 function preload() {
   spectral = loadFont("fonts/Spectral.ttf");
@@ -57,17 +58,26 @@ function setup() {
 
 function drawText() {
   background('#17181c');
-  currentWord = random(pickWordBank());
   
-  // word
+  const availableWords = dictionnaire.filter(word => !usedWords.includes(word.mot));
+  
+  // restart if no words left
+  if (availableWords.length === 0) {
+    usedWords = [];
+  }
+
+  currentWord = random(availableWords);
+  // currentWord = random(dictionnaire);
+  
+  // word text
   textFont(spectral, 64);
   text(currentWord.mot, width/2, 85);
 
-  // meaning
+  // meaning text
   textFont(spectralItalic, 32);
   text(currentWord.sig, 0, 150, width);
     
-  // scores
+  // scores text
   textFont(spectralBoldItalic, 16);
   text("total", width/3, 5);
   text("correct", width/2, 5);
@@ -77,10 +87,6 @@ function drawText() {
   text(total, width/3, 25);
   text(score, width/2, 25);
   text(`${round(score / total * 100) || 0}%`, 2*width/3, 25);
-}
-
-function pickWordBank() {
-  return aWords
 }
 
 // if an answer is chosen
@@ -98,15 +104,26 @@ function handleResponse(e) {
   let previousMot = currentWord.mot;
   let previousGenre = currentWord.genre;
   
-  if (userSelection[0] == previousGenre[0]) { score++; }
+  if (userSelection[0] == previousGenre[0]) {
+    score++;
+    usedWords.push(currentWord.mot); // add word to dictionary filter to prevent it from being chosen again
+    selectedRadio.parentElement.style.backgroundColor = 'hsl(123, 90%, 10%)';
+    selectedRadio.parentElement.style.boxShadow = '0 0 0 2px hsl(123, 90%, 40%) inset';
+  } else {
+    selectedRadio.parentElement.style.backgroundColor = 'hsl(0, 90%, 10%)';
+    selectedRadio.parentElement.style.boxShadow = '0 0 0 2px hsl(0, 90%, 40%) inset';
+  }
   total++;
     
-  drawText(); //currentWord = pickWord(); // display a new word
-  
-  if (userSelection[0] !== previousGenre[0]) {
-    text(`Oups, that's not quite right. The gender of « ${previousMot} » is ${previousGenre}.`, width / 2, height - 15);
-    return
-  }
+  setTimeout(function() {
+    selectedRadio.parentElement.style.backgroundColor = '';
+    selectedRadio.parentElement.style.boxShadow = '';
+    drawText();
+    if (userSelection[0] !== previousGenre[0]) {
+      text(`Oups, that's not quite right. The gender of « ${previousMot} » is ${previousGenre}.`, width / 2, height - 15);
+      return
+    }
+  }, 500); // display a new word after a 0.5s delay
 }
 
 // if word is skipped
