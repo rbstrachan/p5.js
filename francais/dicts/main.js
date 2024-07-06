@@ -1,4 +1,4 @@
-const dictionnaire = [
+const main = [
   { mot: "autoroute", genre: "féminin", sig: "highway; road; route" },
   { mot: "abeille", genre: "féminin", sig: "bee" },
   { mot: "abri", genre: "masculin", sig: "shelter; shed" },

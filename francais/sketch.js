@@ -24,12 +24,16 @@ let currentWord;
 let score = 0;
 let total = 0;
 let spectral, spectralItalic, spectralBoldItalic; // spectralBold
+let availableDictionaries;
 let usedWords = [];
 
 function preload() {
   spectral = loadFont("fonts/Spectral.ttf");
   spectralItalic = loadFont("fonts/Spectral-Italic.ttf");
   spectralBoldItalic = loadFont("fonts/Spectral-BoldItalic.ttf");
+  
+  // concatenate all dictionaries together
+  availableDictionaries = main.concat(géographie);
 }
 
 function setup() {
@@ -51,15 +55,14 @@ function setup() {
   idkButton = document.querySelector(".btn-fail");
   idkButton.addEventListener('click', handleFail)
   
-  document.addEventListener('keydown', handleKeyPress);
-  
-  noLoop(); // prevent the code from running every frame
+  document.addEventListener('keydown', handleKeyPress);  
 }
 
 function drawText() {
   background('#17181c');
   
-  const availableWords = dictionnaire.filter(word => !usedWords.includes(word.mot));
+  // filter out words that have been correctly guessed
+  const availableWords = availableDictionaries.filter(word => !usedWords.includes(word.mot));
   
   // restart if no words left
   if (availableWords.length === 0) {
@@ -67,7 +70,6 @@ function drawText() {
   }
 
   currentWord = random(availableWords);
-  // currentWord = random(dictionnaire);
   
   // word text
   textFont(spectral, 64);
@@ -123,7 +125,7 @@ function handleResponse(e) {
       text(`Oups, that's not quite right. The gender of « ${previousMot} » is ${previousGenre}.`, width / 2, height - 15);
       return
     }
-  }, 500); // display a new word after a 0.5s delay
+  }, 500); // display a new word (along with any warning messages) after a 0.5s delay
 }
 
 // if word is skipped
