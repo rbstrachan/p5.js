@@ -4,8 +4,8 @@ let spawnInterval = 300;
 let lastSpawnTime = 0;
 let pumpkinImage;
 let skullImage;
-let backgroundImage; 
-let gameTime = 0;
+let backgroundImage;
+let gameTime = 60;
 let gameOver = false;
 const endMessage = 'Spooooktacular!';
 let creepySound, matchSound, winSound;
@@ -20,12 +20,12 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(650*3 - 150, 1080 - 180);
+  createCanvas(650 * 3 - 150, 1080 - 180);
   setInterval(() => {
     if (gameTime > 0 && !gameOver) {
-      gameTime--; 
+      gameTime--;
     } else if (gameTime <= 0) {
-      gameOver = true; 
+      gameOver = true;
     }
   }, 1000);
 
@@ -41,7 +41,7 @@ function draw() {
 
   textAlign(RIGHT);
   text(`Time: ${gameTime}s`, width - 10, 40);
-  textAlign(LEFT); 
+  textAlign(LEFT);
 
   if (gameOver) {
     textSize(64);
@@ -84,10 +84,10 @@ function mousePressed() {
           score++;
           matchSound.play();
         } else {
-          score--; 
+          score--;
         }
 
-        objects.splice(i, 1); 
+        objects.splice(i, 1);
         break;
       }
     }
@@ -104,7 +104,7 @@ class FallingObject {
   }
 
   update() {
-    this.y += this.speed; 
+    this.y += this.speed;
   }
 
   display() {
