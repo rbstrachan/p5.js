@@ -1,13 +1,6 @@
-/* html,
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #1c1c1c;
+* {
+  cursor: url("https://image.s10.sfmc-content.com/lib/fe4415707564057b741571/m/2/21c96ed9-04b9-4d43-8698-4c953cb83639.png"), default;
 }
-
-canvas {
-  display: block;
-} */
 
 html,
 body {
@@ -18,10 +11,6 @@ body {
 body {
   margin: 0;
   display: flex;
-
-  /* This centers our sketch horizontally. */
   justify-content: center;
-
-  /* This centers our sketch vertically. */
   align-items: center;
 }
