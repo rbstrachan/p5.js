@@ -1,3 +1,5 @@
+// by reiwa
+
 // TODO
 // - add identifiers to the debt inputs
 // - make E bar draggable?
@@ -14,10 +16,10 @@ let currentEstateValue = 120;
 let numDebtsVal;
 
 function setup() {
-  createCanvas(displayWidth * 2/3, displayHeight * 2/3);
-  
+  createCanvas(displayWidth * 2 / 3, displayHeight * 2 / 3);
+
   window.addEventListener('wheel', handleScroll);
-  
+
   createP("n").position(width - 270, 6);
   numDebts = createSlider(2, 7, 3);
   numDebts.position(width - 250, 20);
@@ -29,7 +31,7 @@ function setup() {
   estateValueInput.position(width - 250, 50);
   estateValueInput.size(60);
   estateValueInput.input(validateEstateValue);
-  
+
   createP("Debts").position(width - 230, 65)
   debts.push(createInput("300", "number"));
   debts.push(createInput("200", "number"));
@@ -40,7 +42,7 @@ function setup() {
     debts[i].size(60);
     debts[i].changed(calcDebtTotal);
   }
-  
+
   calcDebtTotal();
 }
 
@@ -73,7 +75,7 @@ function validateEstateValue() {
 function updateDebts() {
   let n = parseInt(numDebts.value());
   let currentDebtsLength = debts.length;
-  
+
   if (n > currentDebtsLength) {
     for (let i = currentDebtsLength; i < n; i++) {
       let debtInput = createInput("100", "number");
@@ -88,10 +90,10 @@ function updateDebts() {
       debts.pop();
     }
   }
-  
+
   numDebtsVal.remove();
   numDebtsVal = createP(numDebts.value()).position(width - 66, 6);
-  
+
   calcDebtTotal();
 }
 
@@ -148,10 +150,10 @@ function draw() {
   let topY = 50;
   let bottomY = height - 50;
   let spacing = min(36, 36 - debts.length * 2);
-  let drawingWidth = (3.5/7 + 1/42 * (numDebts.value() - 3)) * width;
+  let drawingWidth = (3.5 / 7 + 1 / 42 * (numDebts.value() - 3)) * width;
 
   let containerWidth = Math.max((drawingWidth - (debts.length + 1) * spacing) / debts.length, 20);
-  
+
   maxDebt = 0;
   for (let debtInput of debts) {
     let debt = parseInt(debtInput.value());
@@ -159,17 +161,17 @@ function draw() {
   }
 
   estateValue = constrain(parseInt(estateValueInput.value()), 0, debtTotal);
-  
+
   awards = cg(estateValue, debts.map(debtInput => parseInt(debtInput.value())));
   awards.sort((a, b) => b - a);
-  
+
   let x = drawingWidth - containerWidth - spacing;
 
   let sortedDebts = [...debts].sort((a, b) => parseInt(b.value()) - parseInt(a.value()));
 
   sortedDebts.forEach((debtInput, index) => {
     let debt = parseInt(debtInput.value());
-    let debtHeight = map(debt/2, 0, maxDebt, 0, bottomY - topY);
+    let debtHeight = map(debt / 2, 0, maxDebt, 0, bottomY - topY);
 
     fill(200, 200, 200);
     // rect(x, topY, containerWidth, debtHeight);
@@ -177,8 +179,8 @@ function draw() {
     let remainingHeight = debtHeight;
     while (remainingHeight > 0) {
       let pushHeight = Math.min(remainingHeight, (bottomY - topY) / 2);
-      line(x+containerWidth / 2, topY, x+containerWidth/2, bottomY)
-      rect(x, topY + debtHeight - remainingHeight, containerWidth, -pushHeight);      
+      line(x + containerWidth / 2, topY, x + containerWidth / 2, bottomY)
+      rect(x, topY + debtHeight - remainingHeight, containerWidth, -pushHeight);
       rect(x, bottomY - (debtHeight - remainingHeight) - pushHeight, containerWidth, pushHeight);
       remainingHeight -= pushHeight;
     }
@@ -187,7 +189,7 @@ function draw() {
       rect(x + 5, (topY + bottomY) / 2 - 1, containerWidth - 10, 6)
       stroke(0);
     }
-    
+
     strokeWeight(1);
     fill(0); // Black text
     textSize(12);
@@ -195,9 +197,9 @@ function draw() {
     text(index + 1, x + containerWidth / 2, topY - 5);
     text("$" + awards[index].toFixed(2), x + containerWidth / 2, bottomY + 20);
     text((awards[index].toFixed(2) * 100 / debt).toFixed(2) + "%", x + containerWidth / 2, bottomY + 34);
-    text((awards[index].toFixed(2) * 100 / debtTotal).toFixed(2) + "%", x + containerWidth / 2, bottomY + 48);
+    // text((awards[index].toFixed(2) * 100 / debtTotal).toFixed(2) + "%", x + containerWidth / 2, bottomY + 48);
     strokeWeight(5);
-    
+
     x -= containerWidth + spacing;
   })
 
@@ -205,11 +207,11 @@ function draw() {
   strokeWeight(5);
   line(0, topY, drawingWidth, topY);
   line(0, bottomY, drawingWidth, bottomY);
-  
+
   if (!isNaN(estateValue)) {
     let estateLineY = constrain(topY + (bottomY - topY) * (1 - (awards[0] / maxDebt)), topY, bottomY);
     let estateLinePosition = map(estateLineY, bottomY, topY, 0, bottomY - topY)
-    
+
     x = drawingWidth - containerWidth - spacing;
     for (let debtInput of sortedDebts) {
       let debt = parseInt(debtInput.value());
@@ -218,7 +220,7 @@ function draw() {
       let debtBBottom = bottomY;
       let debtTTop = topY;
       let debtTBottom = topY + debtHeight / 2;
-      
+
       let fillBTop = Math.min(estateLinePosition, debtBTop);
       let fillBBottom = Math.min(bottomY, debtBBottom);
       let fillTTop = estateLinePosition;
@@ -229,9 +231,9 @@ function draw() {
       strokeWeight(0);
       rect(x + 2, height - 50 - fillBTop + 2, containerWidth - 4, fillBTop - 4);
       strokeWeight(5);
-      
+
       if (bottomY - topY - estateLinePosition < topY + debtHeight / 2 - 50) {
-        rect(x, estateLineY, containerWidth, fillTBottom - estateLineY);          
+        rect(x, estateLineY, containerWidth, fillTBottom - estateLineY);
       }
 
       // stroke(0,108,86);
@@ -242,7 +244,7 @@ function draw() {
       triangle(drawingWidth, estateLineY, drawingWidth + 20, estateLineY + 10, drawingWidth + 20, estateLineY - 10);
       stroke(0);
       // text("E", drawingWidth + 20, estateLineY)
-      
+
       x -= containerWidth + spacing;
     }
   }
