@@ -16,3 +16,11 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+.grab {
+  cursor: grab;
+}
+
+.grabbing {
+  cursor: grabbing;
+}
