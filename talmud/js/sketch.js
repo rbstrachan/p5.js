@@ -3,24 +3,37 @@
 // tbp.js code adapted from [xianqui](https://github.com/xianqiu/Bankrupt)
 
 // TODO
+// - reorder functions to make more sense and group similar functions together
 // - add a blue rectangle (like the grey rectangle) to half way point if estate is more than half of total debt to hide unwanted rectagnle outline
 // - fix position of inputs - put them half way between edge of debt rectangle and edge of screen
+// - fix issue where drawingWidth changes immediately after changing number of debts, instead of when mouse is released
+// - fix issue where estateLine can be scrolled even if cursor is not within the drawing area
+// - add a color picker to allow user the user to change the color of the debt rectangle fill
+// - - automatically change the color of the estate line to be slightly darker
+
+// KNOWN BUGS
+// - it is not always possible to drag the estate line to the top of the screen (debtTotal)
+// - the controls are not properly placed, allowing the debt rectangles to overlap them when the number of debts is high or screen width is low
 
 let debts = [];
 let awards = [];
 let numDebts, numDebtsVal, debtTotal, maxDebt;
 let estateValue, estateValueInput;
 let currentEstateValue = 120;
-let dragging = false;
+let primaryMouseButtonDown, dragging = false;
 let estateLineY, topY, bottomY;
 let randomizeButton;
+let drawingWidth;
 
 const INPUT_WIDTH = 60;
 const VERTICAL_MARGIN = 50;
 
 function setup() {
     createCanvas(displayWidth * 3 / 4, displayHeight * 2 / 3);
+
     window.addEventListener('wheel', handleScroll);
+    document.addEventListener("mousedown", setPrimaryButtonState);
+    document.addEventListener("mouseup", setPrimaryButtonState);
 
     topY = VERTICAL_MARGIN;
     bottomY = height - VERTICAL_MARGIN;
@@ -47,14 +60,13 @@ function draw() {
     background(220);
 
     let spacing = min(36, 36 - debts.length * 2);
-    let drawingWidth = (3.5 / 7 + 1 / 42 * (numDebts.value() - 3)) * width;
+    drawingWidth = (3.5 / 7 + 1 / 42 * (numDebts.value() - 3)) * width;
     let containerWidth = Math.max((drawingWidth - (debts.length + 1) * spacing) / debts.length, 20);
 
     maxDebt = Math.max(...debts.map(debtInput => parseInt(debtInput.value())));
     estateValue = constrain(parseInt(estateValueInput.value()), 0, debtTotal);
 
-    awards = cg(estateValue, debts.map(debtInput => parseInt(debtInput.value())));
-    awards.sort((a, b) => b - a);
+    calculateAwards(estateValue);
 
     let x = drawingWidth - containerWidth - spacing;
     let sortedDebts = [...debts].sort((a, b) => parseInt(b.value()) - parseInt(a.value()));
@@ -72,7 +84,7 @@ function draw() {
             stroke(0);
         }
 
-        drawDebtLabels(x, topY, bottomY, containerWidth, index, debt, awards[index]);
+        drawDebtLabels(x, topY, bottomY, containerWidth, index, debt, awards[index], drawingWidth);
 
         x -= containerWidth + spacing;
     })
@@ -83,16 +95,29 @@ function draw() {
         drawEstateLine(maxDebt, topY, bottomY, drawingWidth, containerWidth, spacing, sortedDebts);
     }
 
-    if (mouseY >= estateLineY - 10 && mouseY <= estateLineY + 10) {
-        document.body.style.cursor = 'grab';
-    } else {
-        document.body.style.cursor = 'default';
+    if (!primaryMouseButtonDown) {
+        if (mouseY >= estateLineY - 15 && mouseY <= estateLineY + 15 && mouseX >= 0 && mouseX <= drawingWidth + 25) {
+            document.body.style.cursor = 'grab';
+        } else {
+            document.body.style.cursor = 'default';
+        }
     }
 }
 
+function calculateAwards(setVal) {
+    awards = cg(setVal, debts.map(debtInput => parseInt(debtInput.value())));
+    awards.sort((a, b) => b - a);
+}
+
+function setPrimaryButtonState(e) {
+    var flags = e.buttons !== undefined ? e.buttons : e.which;
+    primaryMouseButtonDown = (flags & 1) === 1;
+}
+
 function mousePressed() {
-    if (mouseY >= estateLineY - 15 && mouseY <= estateLineY + 15) {
+    if (mouseY >= estateLineY - 15 && mouseY <= estateLineY + 15 && mouseX >= 0 && mouseX <= drawingWidth + 25) {
         dragging = true;
+        document.body.style.cursor = 'grabbing';
     }
 }
 
@@ -110,8 +135,7 @@ function mouseDragged() {
 }
 
 function calculateEstateValueFromLineY(lineY, topY, bottomY) {
-    let awards = cg(debtTotal, debts.map(debtInput => parseInt(debtInput.value())));
-    awards.sort((a, b) => b - a);
+    calculateAwards(debtTotal);
 
     for (let i = 0; i <= debtTotal; i++) {
         let tempAwards = cg(i, debts.map(debtInput => parseInt(debtInput.value())));
@@ -122,6 +146,7 @@ function calculateEstateValueFromLineY(lineY, topY, bottomY) {
             break;
         }
     }
+
     return estateValue;
 }
 
@@ -204,7 +229,7 @@ function updateDebts() {
     }
 
     numDebtsVal.remove();
-    numDebtsVal = createP(numDebts.value()).position(width - 66, 6);
+    numDebtsVal = createLabel(numDebts.value(), width - 66, 6);
 
     randomizeButton.position(width - 250, 110 + numDebts.value() * 30);
     console.log('here');
@@ -228,14 +253,17 @@ function drawDebtRectangles(x, topY, bottomY, containerWidth, debtHeight) {
     }
 }
 
-function drawDebtLabels(x, topY, bottomY, containerWidth, index, debt, award) {
-    strokeWeight(1);
+function drawDebtLabels(x, topY, bottomY, containerWidth, index, debt, award, drawingWidth) {
     fill(0);
+    strokeWeight(0);
+    textSize(16);
+    text("↓ ENTER AN ESTATE VALUE, SCROLL OR DRAG THE ESTATE LINE TO SEE THE DISTRIBUTION ↓", drawingWidth / 2, textSize());
+    strokeWeight(1);
     textSize(12);
     textAlign(CENTER, BOTTOM);
     text(index + 1, x + containerWidth / 2, topY - 5);
     text("$" + award.toFixed(2), x + containerWidth / 2, bottomY + 20);
-    text((award.toFixed(2) * 100 / debt).toFixed(2) + "%", x + containerWidth / 2, bottomY + 34);
+    text((award.toFixed(2) * 100 / debt).toFixed(2) + "%", x + containerWidth / 2, bottomY + 36);
     strokeWeight(5);
 }
 
