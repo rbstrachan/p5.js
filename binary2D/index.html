@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/addons/p5.sound.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <meta charset="utf-8" />
 
-  </head>
-  <body>
-    <center>
-    <main class="container">
-      <textarea id="codeData" rows="40" cols="80">111111100000010110011110101111111
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator/Decoder</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/addons/p5.sound.min.js"></script>
+  <script src="jsQR.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+  <div class="app-container">
+    <div class="input-section">
+      <div class="file-controls">
+        <input type="file" id="imageUpload" accept="image/*">
+        <button id="copyButton">Copy</button>
+      </div>
+
+      <textarea id="codeData" placeholder="Enter binary string or upload QR code image">111111100000010110011110101111111
 100000101100000011010000101000001
 101110101000011111011101001011101
 101110101000100000010010101011101
@@ -43,9 +54,23 @@
 101110101101111011001110001010011
 100000100110011000010111000100000
 111111100101001100011100111011101</textarea>
-    <script src="jsQR.js"></script>
-    <script src="sketch.js"></script>
-    </main>
-    </center>
-  </body>
+
+      <div id="loadingSpinner" class="spinner" style="display: none;">
+        <div class="spinner-inner"></div>
+      </div>
+    </div>
+
+    <div class="output-section">
+      <div id="canvas-container"></div>
+      <label class="invert-checkbox">
+        <input type="checkbox" id="invertColours">
+        Invert colours
+      </label>
+      <button id="downloadButton">Download QR Code (.png)</button>
+    </div>
+  </div>
+
+  <script src="sketch.js"></script>
+</body>
+
 </html>
