@@ -225,7 +225,7 @@ const main = [
   { mot: "canon", genre: "masculin", sig: "cannon" },
   { mot: "caoutchouc", genre: "masculin", sig: "rubber" },
   { mot: "capacité", genre: "féminin", sig: "ability" },
-  { mot: "capitaine", genre: "masculin", sig: "captain" },
+  // { mot: "capitaine", genre: "masculin", sig: "captain" },
   { mot: "capital", genre: "masculin", sig: "capital" },
   { mot: "capot", genre: "masculin", sig: "hood" },
   { mot: "capture", genre: "féminin", sig: "catch" },
