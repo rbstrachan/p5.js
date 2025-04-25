@@ -2,26 +2,37 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tête-aux-Pieds</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ankramot</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
     <div class="container">
-        <h1>Tête-aux-Pieds</h1>
+        <h1>Ankramot</h1>
+
         <div class="game-area">
-            <div class="letter-card">
-                <span id="start-letter"></span>
+            <!-- START TILE -->
+            <div class="letter-card scrabble-tile">
+                <span class="tile-letter" id="start-letter"></span>
+                <span class="tile-score"></span>
             </div>
-            <div class="word-input-area">
+
+            <!-- GENERATED TILES GO HERE -->
+            <div class="word-input-area"></div>
+
+            <!-- END TILE -->
+            <div class="letter-card scrabble-tile">
+                <span class="tile-letter" id="end-letter"></span>
+                <span class="tile-score"></span>
             </div>
-            <div class="letter-card">
-                <span id="end-letter"></span>
-            </div>
-            <input type="text" id="hidden-input" style="opacity: 0; position: absolute; top: -100px;">
+
+            <!-- Hidden real input -->
+            <input type="text" id="hidden-input" style="opacity:0; position:absolute; top:-100px;" />
         </div>
+
+        <!-- accented buttons -->
         <div class="accented-letters">
             <button type="button" data-letter="é">É</button>
             <button type="button" data-letter="è">È</button>
@@ -30,40 +41,45 @@
             <button type="button" data-letter="ç">Ç</button>
             <button type="button" data-letter="ï">Ï</button>
         </div>
-        <button id="submit-button" type="submit">Soumettre</button>
-        <button id="pass-button">Passer</button>
-        <div id="result"></div>
-        <div id="discord"></div>
-        <div id="score">Score: 0</div>
-        <div id="round">Manche: 1</div>
-        <div id="average">Moyenne: 0</div>
 
-        <div id="rules-modal" class="modal">
-            <div class="modal-content">
-                <h1>Bienvenue au jeu de Tête-aux-Pieds!</h1>
-                <h3>Voici comment y jouer:</h3>
-                <ul>
-                    <li>Réfléchissez pour formuler un nom ou adjectif.</li>
-                    <li>Votre mot doit commencer et se terminer par les lettres affichées.</li>
-                    <li>Plus le mot que vous trouvez est long, plus vous gagnez de points.</li>
-                    <li>Un point bonus est accordé si le mot est de 8 charactères ou plus.</li>
-                </ul>
-                <p>Certains types de mots ne figurent <b>pas</b> dans le jeu:</p>
-                <ul>
-                    <li>Mots avec des espaces (coucher de soleil)</li>
-                    <li>Mots avec des tirets (après-midi)</li>
-                    <li>Abbréviations (ADN)</li>
-                    <li>Pluriels (voitures)</li>
-                    <li>Noms propres, tels que les noms de lieux (France)</li>
-                    <li>Verbes (manger)</li>
-                </ul>
-                <button id="close-rules">Compris, allons-y!</button>
-            </div>
+        <div class="controls">
+            <button id="submit-button" class="btn btn-primary">Soumettre</button>
+            <button id="pass-button" class="btn btn-secondary">Passer</button>
         </div>
 
-        <div id="modal-overlay" class="modal-overlay"></div>
+        <div id="result" aria-live="polite"></div>
+        <div id="discord"></div>
+        <div class="stats">
+            <div id="score">Score: 0</div>
+            <div id="round">Manche: 1</div>
+            <div id="average">Moyenne: 0</div>
+        </div>
 
+        <!-- RULES MODAL -->
+        <div id="modal-overlay" class="modal-overlay"></div>
+        <div id="rules-modal" class="modal">
+            <div class="modal-content">
+                <h2>Bienvenue au jeu d'Ankramot</h2>
+                <h3>Le but est simple, voici comment y jouer.</h3>
+                <ol>
+                    <li>Trouvez un mot (nom ou adjectif) qui commence et se termine par les lettres affichées.</li>
+                    <li>Plus le mot que vous trouvez est long, plus vous gagnez de points.</li>
+                    <li>Un bonus de points vous attend pour tout mot de 8 lettres ou plus!</li>
+                </ol>
+                <p>Certains types de mots ne sont <b>pas</b> autorisés:</p><br>
+                <ul>
+                    <li>Mots avec des espaces (ex. “coucher de soleil”)</li>
+                    <li>Mots avec des tirets (ex. “après-midi”)</li>
+                    <li>Abréviations (ex. “ADN”)</li>
+                    <li>Pluriels (ex. “voitures”)</li>
+                    <li>Noms propres (ex. “France”)</li>
+                    <li>Verbes (ex. “manger”)</li>
+                </ul>
+                <button id="close-rules" class="btn btn-success">Compris, allons-y!</button>
+            </div>
+        </div>
     </div>
+
     <script src="wordList.js"></script>
     <script src="script.js"></script>
 </body>
