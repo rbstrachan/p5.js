@@ -1,0 +1,162 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* html,
+body {
+    height: 100%;
+    margin: 0;
+} */
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #eef2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+
+.container {
+    width: 100%;
+    max-width: 480px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+#progress {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#sentence {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    text-align: center;
+    min-height: 2.5em;
+}
+
+#options {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.option {
+    position: relative;
+    padding: 12px 32px;
+    font-weight: 600;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s, border-color 0.2s;
+    font-size: 1.2em;
+}
+
+.option input {
+    display: none;
+}
+
+.option span {
+    font-size: 1em;
+}
+
+.option:hover {
+    background: #f7f7f7;
+}
+
+.option.selected {
+    border-color: #007bff;
+    background: #e6f0ff;
+}
+
+.option.correct {
+    border-color: #28a745;
+    background: #e6f9ee;
+}
+
+.option.incorrect {
+    border-color: #dc3545;
+    background: #f9e6e6;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#check-btn {
+    background: #007bff;
+    color: #fff;
+}
+
+#check-btn:disabled {
+    background: #8bbbf7;
+    cursor: default;
+}
+
+#check-btn:hover:not(:disabled) {
+    background: #0056b3;
+}
+
+#next-btn {
+    background: #6c757d;
+    color: #fff;
+}
+
+#next-btn:disabled {
+    background: #c2c4c6;
+    cursor: default;
+}
+
+#next-btn:hover:not(:disabled) {
+    background: #5a6268;
+}
+
+#feedback {
+    text-align: center;
+    font-weight: bold;
+    min-height: 1.5em;
+}
+
+#feedback.correct {
+    color: #28a745;
+}
+
+#feedback.incorrect {
+    color: #dc3545;
+}
+
+@media (max-width: 400px) {
+    #options {
+        flex-direction: column;
+    }
+
+    .option {
+        margin-bottom: 10px;
+        text-align: center;
+    }
+}
