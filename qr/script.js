@@ -117,7 +117,8 @@ document.getElementById('nextQRBtn').addEventListener('click', function () {
 function prepareChunks(data) {
     const chunkSize = MAX_QR_DATA;
     state.chunks = [];
-    // Prepare header chunk with metadata (still using JSON for the header)
+
+    // Prepare header chunk with metadata
     const headerData = {
         type: 'header',
         fileName: state.fileName,
@@ -125,79 +126,49 @@ function prepareChunks(data) {
         totalSize: data.length,
         totalChunks: Math.ceil(data.length / chunkSize) + 1 // +1 for header chunk
     };
-    // Store the header as a JSON string
-    state.chunks.push({
-        type: 'json',
-        data: JSON.stringify(headerData)
-    });
-    
+
+    state.chunks.push(JSON.stringify(headerData));
     state.totalChunks = headerData.totalChunks;
-    // Split data into binary chunks (no base64 encoding)
+
+    // Split data into chunks
     for (let i = 0; i < data.length; i += chunkSize) {
         const chunk = data.slice(i, i + chunkSize);
-        
-        // Store the raw binary chunk with metadata
-        state.chunks.push({
-            type: 'binary',
+        // Convert binary chunk to base64
+        const base64Chunk = arrayBufferToBase64(chunk);
+
+        const chunkData = {
+            type: 'chunk',
             index: state.chunks.length,
             totalChunks: headerData.totalChunks,
-            data: chunk
-        });
+            data: base64Chunk
+        };
+
+        state.chunks.push(JSON.stringify(chunkData));
     }
 }
-// Update the displayQRCode function to handle binary data
+
 function displayQRCode(index) {
     const qrCodeContainer = document.getElementById('qrCode');
     const qrProgress = document.getElementById('qrProgress');
     qrCodeContainer.innerHTML = '';
+
     // Create a canvas element
     const canvas = document.createElement('canvas');
     qrCodeContainer.appendChild(canvas);
-    
-    const chunk = state.chunks[index];
-    
+
     try {
-        if (chunk.type === 'json') {
-            // For JSON chunks (header), use the data as is
-            QRCode.toCanvas(canvas, chunk.data, {
-                scale: 8,
-                margin: 1,
-                errorCorrectionLevel: 'L'
-            }, function (error) {
-                if (error) throw error;
-            });
-        } else if (chunk.type === 'binary') {
-            // For binary chunks, we need to create a structured binary format
-            // Format: [2 bytes for index][2 bytes for total chunks][binary data]
-            const headerSize = 4; // 4 bytes for metadata
-            const buffer = new ArrayBuffer(headerSize + chunk.data.length);
-            const view = new DataView(buffer);
-            
-            // Write chunk index and total chunks (2 bytes each)
-            view.setUint16(0, chunk.index, false); // Big-endian
-            view.setUint16(2, chunk.totalChunks, false);
-            
-            // Copy binary data after the header
-            const uint8 = new Uint8Array(buffer);
-            uint8.set(chunk.data, headerSize);
-            
-            // Convert to a binary string for the QR code
-            let binaryString = '';
-            for (let i = 0; i < uint8.length; i++) {
-                binaryString += String.fromCharCode(uint8[i]);
+        QRCode.toCanvas(canvas, state.chunks[index], {
+            scale: 8,
+            margin: 1,
+            errorCorrectionLevel: 'L'
+        }, function (error) {
+            if (error) {
+                console.error('Error generating QR code:', error);
+                qrProgress.innerHTML = `<div class="error">Error generating QR code: ${error.message}</div>`;
+            } else {
+                qrProgress.innerHTML = `Showing block ${index + 1} of ${state.totalChunks} (${Math.round((index + 1) / state.totalChunks * 100)}%)`;
             }
-            
-            // Generate QR code with this binary string
-            QRCode.toCanvas(canvas, binaryString, {
-                scale: 8,
-                margin: 1,
-                errorCorrectionLevel: 'L'
-            }, function (error) {
-                if (error) throw error;
-            });
-        }
-        
-        qrProgress.innerHTML = `Showing block ${index + 1} of ${state.totalChunks} (${Math.round((index + 1) / state.totalChunks * 100)}%)`;
+        });
     } catch (error) {
         console.error('Error generating QR code:', error);
         qrProgress.innerHTML = `<div class="error">Error generating QR code: ${error.message}</div>`;
@@ -314,54 +285,31 @@ function scanQRCode() {
 
         if (code) {
             try {
-                // First try to parse as JSON (for header)
-                try {
-                    const jsonData = JSON.parse(code.data);
-                    if (jsonData.type === 'header') {
-                        document.getElementById('totalBlocks').textContent = jsonData.totalChunks;
-                        state.fileName = jsonData.fileName;
-                        state.fileType = jsonData.fileType;
+                const chunkData = JSON.parse(code.data);
 
-                        // Mark header as received
-                        if (!state.receivedChunks[0]) {
-                            state.receivedChunks[0] = jsonData;
-                            updateReceiveProgress();
-                        }
+                // Handle header chunk
+                if (chunkData.type === 'header') {
+                    document.getElementById('totalBlocks').textContent = chunkData.totalChunks;
+                    state.fileName = chunkData.fileName;
+                    state.fileType = chunkData.fileType;
+
+                    // Mark header as received
+                    if (!state.receivedChunks[0]) {
+                        state.receivedChunks[0] = chunkData;
+                        updateReceiveProgress();
                     }
-                    return; // Successfully processed JSON data
-                } catch (jsonError) {
-                    // Not JSON, assume binary data
                 }
-                
-                // Process as binary data
-                const binaryString = code.data;
-                const bytes = new Uint8Array(binaryString.length);
-                
-                // Convert string back to bytes
-                for (let i = 0; i < binaryString.length; i++) {
-                    bytes[i] = binaryString.charCodeAt(i);
-                }
-                
-                // Extract metadata from the first 4 bytes
-                const view = new DataView(bytes.buffer);
-                const chunkIndex = view.getUint16(0, false);
-                const totalChunks = view.getUint16(2, false);
-                
-                // Extract the actual data (skip the first 4 bytes)
-                const chunkData = bytes.slice(4);
-                
-                // Store chunk if not already received
-                if (!state.receivedChunks[chunkIndex]) {
-                    state.receivedChunks[chunkIndex] = {
-                        type: 'binary',
-                        index: chunkIndex,
-                        data: chunkData
-                    };
-                    updateReceiveProgress();
-                    
-                    // Check if all chunks received
-                    if (Object.keys(state.receivedChunks).length === totalChunks) {
-                        assembleFile();
+                // Handle data chunk
+                else if (chunkData.type === 'chunk') {
+                    // Store chunk if not already received
+                    if (!state.receivedChunks[chunkData.index]) {
+                        state.receivedChunks[chunkData.index] = chunkData;
+                        updateReceiveProgress();
+
+                        // Check if all chunks received
+                        if (Object.keys(state.receivedChunks).length === chunkData.totalChunks) {
+                            assembleFile();
+                        }
                     }
                 }
             } catch (error) {
@@ -398,24 +346,24 @@ function assembleFile() {
             }
         }
 
-        // Calculate total size of compressed data
-        let totalSize = 0;
-        
+        // Assemble binary data
+        const binaryChunks = [];
+
         // Skip header (index 0)
         for (let i = 1; i < totalChunks; i++) {
             const chunk = state.receivedChunks[i];
-            totalSize += chunk.data.length;
+            const binaryData = base64ToArrayBuffer(chunk.data);
+            binaryChunks.push(binaryData);
         }
-        
+
         // Combine all binary chunks
-        const combinedData = new Uint8Array(totalSize);
+        const totalLength = binaryChunks.reduce((sum, chunk) => sum + chunk.length, 0);
+        const combinedData = new Uint8Array(totalLength);
+
         let offset = 0;
-        
-        // Skip header (index 0)
-        for (let i = 1; i < totalChunks; i++) {
-            const chunk = state.receivedChunks[i];
-            combinedData.set(chunk.data, offset);
-            offset += chunk.data.length;
+        for (const chunk of binaryChunks) {
+            combinedData.set(chunk, offset);
+            offset += chunk.length;
         }
 
         // Decompress data
@@ -440,11 +388,7 @@ function assembleFile() {
 
         // Add success message
         const receivedData = document.getElementById('receivedData');
-        receivedData.innerHTML += `
-            <div class="success">
-                File successfully reconstructed: ${header.fileName} (${formatFileSize(decompressedData.length)})
-                <br>Compressed size: ${formatFileSize(combinedData.length)} (${(combinedData.length / decompressedData.length * 100).toFixed(1)}% of original)
-            </div>`;
+        receivedData.innerHTML += `<div class="success">File successfully reconstructed: ${header.fileName} (${formatFileSize(decompressedData.length)})</div>`;
 
     } catch (error) {
         console.error('Error assembling file:', error);
@@ -458,6 +402,24 @@ function formatFileSize(bytes) {
     if (bytes < 1024) return bytes + ' bytes';
     else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
     else return (bytes / 1048576).toFixed(2) + ' MB';
+}
+
+function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+}
+
+function base64ToArrayBuffer(base64) {
+    const binaryString = window.atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes;
 }
 
 // Add these to the state object
