@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>QR File Transfer — Send</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>QR Code File Transfer — Send</h1>
+
+    <div class="container">
+        <div class="left-column">
+            <h2>Send Files</h2>
+            <div class="dropzone" id="dropzone">
+                <p>Drag and drop files here or click to select.</p>
+                <input type="file" id="fileInput" style="display: none;">
+            </div>
+
+            <div id="transmitArea" style="display: none;">
+                <h3><span id="fileName"></span></h3>
+                <p><span id="fileSize"></span></p>
+                <button class="button" id="startTransmitBtn">Begin sending!</button>
+
+                <!-- Feedback scanner section -->
+                <div id="feedbackScannerSection" style="display: none;">
+                    <h3>Feedback Scanner</h3>
+                    <p>Scanning for feedback QR from receiving device...</p>
+                    <video id="feedbackCameraPreview"></video>
+                </div>
+
+                <div id="qrProgress"></div>
+                <button class="button" id="nextQRBtn" style="display: none;">Show Next Block Manually</button>
+            </div>
+
+            <div class="switch-page">
+                <p>Need to receive files instead?</p>
+                <a href="receive.html" class="button">Click here to receive files from another device...</a>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="qr-display">
+                <!-- Display area for QR codes -->
+                <div id="qrCode"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

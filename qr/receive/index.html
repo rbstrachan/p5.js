@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>QR File Transfer — Receive</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>QR Code File Transfer — Receive</h1>
+
+    <div class="container">
+        <div class="left-column">
+            <h2>Receive Files</h2>
+            <p>Allow camera access to scan QR codes from the sending device.</p>
+            <video id="cameraPreview"></video>
+
+            <div id="receiveArea">
+                <div id="receivedData">
+                    <p>Scanned blocks: <span id="scannedCount">0</span> / <span id="totalBlocks">?</span></p>
+                    <progress id="receiveProgress" value="0" max="100"></progress>
+                </div>
+
+                <button class="button" id="downloadBtn" style="display: none;">Download File</button>
+            </div>
+
+            <div class="switch-page">
+                <p>Need to send files instead?</p>
+                <a href="../send" class="button">Click here to upload your files...</a>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="qr-display">
+                <!-- Display area for feedback QR code -->
+                <h3>Feedback QR Code</h3>
+                <p>Show this to the sending device to allow for automatic transfer.</p>
+                <div id="feedbackQR"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
