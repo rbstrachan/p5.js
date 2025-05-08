@@ -11,7 +11,7 @@ const state = {
     feedbackScanning: false
 };
 
-const MAX_QR_DATA = 2000;
+const MAX_QR_DATA = 2100;
 
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
