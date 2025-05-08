@@ -11,9 +11,12 @@ h1 {
     margin-bottom: 30px;
 }
 
+h2 {
+    margin-top: 0;
+}
+
 .tabs {
     display: flex;
-    margin-bottom: 20px;
     border-bottom: 1px solid #ddd;
 }
 
