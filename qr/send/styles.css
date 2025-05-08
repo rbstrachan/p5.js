@@ -80,8 +80,8 @@ h2 {
     padding: 20px;
     /* background-color: white; */
     border-radius: 10px;
-    /* box-shadow: 0 4px 6px rgba(0,0,0,0.1); */
-    margin-bottom: 20px;
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+    /* margin-bottom: 20px; */
     display: flex;
     justify-content: center;
 }
@@ -89,6 +89,9 @@ h2 {
 #qrCode canvas {
     max-width: 100%;
     height: auto;
+    width: auto;
+    max-height: 900px;
+    max-width: 900px;
 }
 
 #qrProgress {
