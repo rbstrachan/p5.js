@@ -141,76 +141,6 @@ function updateReceiveProgress() {
     updateFeedbackQR(highestChunkIndex);
 }
 
-// function scanQRCode() {
-//     if (!state.scanning) return;
-
-//     const cameraPreview = document.getElementById('cameraPreview');
-//     const canvas = document.createElement('canvas');
-//     const context = canvas.getContext('2d');
-
-//     if (cameraPreview.videoWidth && cameraPreview.videoHeight) {
-//         canvas.width = cameraPreview.videoWidth;
-//         canvas.height = cameraPreview.videoHeight;
-//         context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
-
-//         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-//         const code = jsQR(imageData.data, imageData.width, imageData.height, {
-//             inversionAttempts: 'dontInvert',
-//         });
-
-//         if (code) {
-//             try {
-//                 try {
-//                     const jsonData = JSON.parse(code.data);
-//                     if (jsonData.type === 'header') {
-//                         document.getElementById('totalBlocks').textContent = jsonData.totalChunks;
-//                         state.fileName = jsonData.fileName;
-//                         state.fileType = jsonData.fileType;
-
-//                         if (!state.receivedChunks[0]) {
-//                             state.receivedChunks[0] = jsonData;
-//                             updateReceiveProgress();
-//                         }
-//                     }
-//                     return;
-//                 } catch (jsonError) {
-//                 }
-
-//                 const binaryString = code.data;
-//                 const bytes = new Uint8Array(binaryString.length);
-
-//                 for (let i = 0; i < binaryString.length; i++) {
-//                     bytes[i] = binaryString.charCodeAt(i);
-//                 }
-
-//                 const view = new DataView(bytes.buffer);
-//                 const chunkIndex = view.getUint16(0, false);
-//                 const totalChunks = view.getUint16(2, false);
-
-//                 const chunkData = bytes.slice(4);
-
-//                 if (!state.receivedChunks[chunkIndex]) {
-//                     state.receivedChunks[chunkIndex] = {
-//                         type: 'binary',
-//                         index: chunkIndex,
-//                         data: chunkData
-//                     };
-//                     updateReceiveProgress();
-
-//                     if (Object.keys(state.receivedChunks).length === totalChunks) {
-//                         assembleFile();
-//                     }
-//                 }
-//             } catch (error) {
-//                 console.error('Error processing QR data:', error);
-//             }
-//         }
-//     }
-
-//     requestAnimationFrame(scanQRCode);
-// }
-
-// Update the scanQRCode function in receive.js
 function scanQRCode() {
     if (!state.scanning) return;
 
@@ -230,33 +160,26 @@ function scanQRCode() {
 
         if (code) {
             try {
-                // Try to parse as JSON
                 const jsonData = JSON.parse(code.data);
 
-                // Handle header data
                 if (jsonData.type === 'header') {
                     document.getElementById('totalBlocks').textContent = jsonData.totalChunks;
                     state.fileName = jsonData.fileName;
                     state.fileType = jsonData.fileType;
 
-                    // Mark header as received
                     if (!state.receivedChunks[0]) {
                         state.receivedChunks[0] = jsonData;
                         updateReceiveProgress();
                     }
                 }
-                // Handle binary data with our new envelope format
                 else if (jsonData.type === 'binary_data') {
                     const chunkIndex = jsonData.index;
                     const totalChunks = jsonData.total;
 
-                    // Decode base64 data
                     const binaryData = base64ToArrayBuffer(jsonData.data);
 
-                    // Extract the data part (skip the 4-byte header)
                     const chunkData = new Uint8Array(binaryData.slice(4));
 
-                    // Store chunk if not already received
                     if (!state.receivedChunks[chunkIndex]) {
                         state.receivedChunks[chunkIndex] = {
                             type: 'binary',
@@ -280,7 +203,6 @@ function scanQRCode() {
     requestAnimationFrame(scanQRCode);
 }
 
-// Helper function for base64 decoding (add this to your code)
 function base64ToArrayBuffer(base64) {
     const binaryString = window.atob(base64);
     const bytes = new Uint8Array(binaryString.length);

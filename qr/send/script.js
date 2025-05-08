@@ -11,7 +11,7 @@ const state = {
     feedbackScanning: false
 };
 
-const MAX_QR_DATA = 500;
+const MAX_QR_DATA = 2000;
 
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
@@ -131,65 +131,11 @@ document.getElementById('nextQRBtn').addEventListener('click', function () {
     }
 });
 
-// function displayQRCode(index) {
-//     const qrCodeContainer = document.getElementById('qrCode');
-//     const qrProgress = document.getElementById('qrProgress');
-//     qrCodeContainer.innerHTML = '';
-
-//     const canvas = document.createElement('canvas');
-//     qrCodeContainer.appendChild(canvas);
-
-//     const chunk = state.chunks[index];
-
-//     try {
-//         if (chunk.type === 'json') {
-//             QRCode.toCanvas(canvas, chunk.data, {
-//                 scale: 8,
-//                 margin: 1,
-//                 errorCorrectionLevel: 'L'
-//             }, function (error) {
-//                 if (error) throw error;
-//             });
-//         } else if (chunk.type === 'binary') {
-
-//             const headerSize = 4;
-//             const buffer = new ArrayBuffer(headerSize + chunk.data.length);
-//             const view = new DataView(buffer);
-
-//             view.setUint16(0, chunk.index, false);
-//             view.setUint16(2, chunk.totalChunks, false);
-
-//             const uint8 = new Uint8Array(buffer);
-//             uint8.set(chunk.data, headerSize);
-
-//             let binaryString = '';
-//             for (let i = 0; i < uint8.length; i++) {
-//                 binaryString += String.fromCharCode(uint8[i]);
-//             }
-
-//             QRCode.toCanvas(canvas, binaryString, {
-//                 scale: 8,
-//                 margin: 1,
-//                 errorCorrectionLevel: 'L'
-//             }, function (error) {
-//                 if (error) throw error;
-//             });
-//         }
-
-//         qrProgress.innerHTML = `Showing block ${index + 1} of ${state.totalChunks} (${Math.round((index + 1) / state.totalChunks * 100)}%)`;
-//     } catch (error) {
-//         console.error('Error generating QR code:', error);
-//         qrProgress.innerHTML = `<div class="error">Error generating QR code: ${error.message}</div>`;
-//     }
-// }
-
-// Update the displayQRCode function in send.js
 function displayQRCode(index) {
     const qrCodeContainer = document.getElementById('qrCode');
     const qrProgress = document.getElementById('qrProgress');
     qrCodeContainer.innerHTML = '';
 
-    // Create a canvas element
     const canvas = document.createElement('canvas');
     qrCodeContainer.appendChild(canvas);
 
@@ -197,7 +143,6 @@ function displayQRCode(index) {
 
     try {
         if (chunk.type === 'json') {
-            // For JSON chunks (header), use the data as is
             QRCode.toCanvas(canvas, chunk.data, {
                 scale: 8,
                 margin: 1,
@@ -206,27 +151,18 @@ function displayQRCode(index) {
                 if (error) throw error;
             });
         } else if (chunk.type === 'binary') {
-            // For binary chunks, we need a reliable way to encode binary data
-            // Let's use base64 encoding for the QR code, even though it's less efficient
-            // This is more reliable than trying to use raw binary
-
-            // Create a structured format: [2-byte index][2-byte total][binary data]
             const headerSize = 4;
             const buffer = new ArrayBuffer(headerSize + chunk.data.length);
             const view = new DataView(buffer);
 
-            // Write header information
             view.setUint16(0, chunk.index, false);
             view.setUint16(2, chunk.totalChunks, false);
 
-            // Copy binary data
             const uint8 = new Uint8Array(buffer);
             uint8.set(chunk.data, headerSize);
 
-            // Use base64 encoding for transmission - more reliable than binary strings
             const base64Data = arrayBufferToBase64(buffer);
 
-            // Create a JSON wrapper with type info
             const binaryEnvelope = JSON.stringify({
                 type: 'binary_data',
                 index: chunk.index,
@@ -234,7 +170,6 @@ function displayQRCode(index) {
                 data: base64Data
             });
 
-            // Generate QR code with this JSON envelope
             QRCode.toCanvas(canvas, binaryEnvelope, {
                 scale: 8,
                 margin: 1,
@@ -251,7 +186,6 @@ function displayQRCode(index) {
     }
 }
 
-// Helper function for base64 encoding (add this to your code)
 function arrayBufferToBase64(buffer) {
     let binary = '';
     const bytes = new Uint8Array(buffer);
