@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR File Transfer</title>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
@@ -376,23 +377,63 @@
         });
         
         async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment' } 
-                });
-                
-                cameraPreview.srcObject = stream;
-                cameraPreview.style.display = 'block';
-                cameraPreview.play();
-                
-                // Start scanning for QR codes
-                requestAnimationFrame(scanQRCode);
-                
-            } catch (error) {
-                console.error('Error accessing camera:', error);
-                document.getElementById('receiveArea').innerHTML = `<div class="error">Error accessing camera: ${error.message}</div>`;
+    try {
+        // Check if mediaDevices API is available
+        if (!navigator.mediaDevices) {
+            // Try alternative access method for older browsers
+            const MediaDevices = navigator.mozGetUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia;
+            
+            if (!MediaDevices) {
+                throw new Error('Your browser doesn\'t support camera access. Try Chrome or update your browser.');
             }
+            
+            // Use older API
+            MediaDevices({video: {facingMode: 'environment'}}, 
+                // Success callback
+                function(stream) {
+                    cameraPreview.srcObject = stream;
+                    cameraPreview.style.display = 'block';
+                    cameraPreview.play();
+                    requestAnimationFrame(scanQRCode);
+                },
+                // Error callback
+                function(error) {
+                    throw new Error('Camera access failed: ' + error.message);
+                }
+            );
+        } else {
+            // Modern API
+            const constraints = { 
+                video: { 
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                } 
+            };
+            
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            cameraPreview.srcObject = stream;
+            cameraPreview.style.display = 'block';
+            cameraPreview.play();
+            
+            // Start scanning for QR codes
+            requestAnimationFrame(scanQRCode);
         }
+    } catch (error) {
+        console.error('Error accessing camera:', error);
+        document.getElementById('receiveArea').innerHTML = `
+            <div class="error">
+                <p>Error accessing camera: ${error.message}</p>
+                <p>Try the following:</p>
+                <ul>
+                    <li>Make sure you've granted camera permissions</li>
+                    <li>Try using Chrome browser instead of Firefox</li>
+                    <li>Check if your camera is being used by another application</li>
+                    <li>Reload the page and try again</li>
+                </ul>
+            </div>`;
+    }
+}
         
         function stopCamera() {
             if (cameraPreview.srcObject) {
