@@ -1,10 +1,10 @@
-// by [reiwa](github.com/reiwa)
+// by [reiwa](reiwa.ca)
 // inspiration from the [Mathologer](https://www.youtube.com/@Mathologer) [video](https://www.youtube.com/watch?v=uNemXgZ-MWY)
 // tbp.js code adapted from [xianqui](https://github.com/xianqiu/Bankrupt)
 
 // TODO
 // - reorder functions to make more sense and group similar functions together
-// - add a blue rectangle (like the grey rectangle) to half way point if estate is more than half of total debt to hide unwanted rectagnle outline
+// - add a blue rectangle (like the grey rectangle) to half way point if estate is more than half of total debt to hide unwanted rectangle outline
 // - fix position of inputs - put them half way between edge of debt rectangle and edge of screen
 // - fix issue where drawingWidth changes immediately after changing number of debts, instead of when mouse is released
 // - fix issue where estateLine can be scrolled even if cursor is not within the drawing area
