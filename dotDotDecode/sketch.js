@@ -116,7 +116,7 @@ let message = "";
 let inputBox;
 let brailleFont;
 let difficultySlider;
-let statusMessage = "Type the Braille you see in the box below and press Enter when you're done.";
+let statusMessage = "Type the Braille you see above into the box below and press Enter when you're done.";
 let statusColor = [150, 150, 150];
 
 function preload() {
